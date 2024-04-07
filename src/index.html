@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home work №11</title>
+    <link rel="stylesheet" href="./css/search-img.css" />
+    <link rel="stylesheet" href="./css/reset.css" />
+  </head>
+  <body>
+    <form class="form js-search-form">
+      <div class="form-group">
+        <input
+          class="form-input"
+          type="text"
+          name="query"
+          placeholder="Search images..."
+        />
+      </div>
+
+      <button class="btn-submit" type="submit">Search</button>
+    </form>
+    <span class="loader" id="loader">Load&nbsp;ng</span>
+    <div class="gallery">
+      <ul class="list-photo"></ul>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
