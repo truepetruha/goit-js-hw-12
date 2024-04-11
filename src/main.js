@@ -66,29 +66,21 @@ async function handleSearch(event) {
     maxPage = Math.ceil(totalHits / 40);
 
     markupPhoto(hits, ulEl);
-    if (hits.length > 0 && hits.length !== totalHits) {
-      btnLoadMore.classList.remove(hiddenClass);
-    } else if (!hits.length) {
-      btnLoadMore.classList.add(hiddenClass);
-
-      iziToast.error({
-        title: 'Error',
-        titleSize: '30',
-        messageSize: '25',
-        message:
-          'Sorry, there are no images matching your search query. Please try again!',
-      });
-    } else {
-      btnLoadMore.classList.add(hiddenClass);
-    }
-  } catch (error) {
-    console.error(error);
-    iziToast.error({
-      title: 'Error',
-      titleSize: '30',
-      messageSize: '25',
-      message: 'Sorry! Try later! Server not working',
-    });
+    
+    if (hits.length > 0 && hits.length !== totalHits && page <= maxPage) {
+    btnLoadMore.classList.remove(hiddenClass);
+  } else {
+    btnLoadMore.classList.add(hiddenClass);
+  }
+  
+} catch (error) {
+  console.error(error);
+  iziToast.error({
+    title: 'Error',
+    titleSize: '30',
+    messageSize: '25',
+    message: 'Sorry! Try later! Server not working',
+  });
   } finally {
     loader.classList.add(hiddenClass);
 
@@ -161,7 +153,6 @@ async function handleLoadMore() {
   }
 }
 
-btnLoadMore.addEventListener('click', handleLoadMore);
 
 // ------------------------------------------------------------РОЗМІТКА--------------------------------------------------------------------
 
