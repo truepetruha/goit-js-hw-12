@@ -28,7 +28,11 @@ let query = '';
 const BASE_URL = 'https://pixabay.com/api';
 const API_KEY = '41849458-2d98265cf06659a45ba73a30c';
 
+btnLoadMore.classList.add(hiddenClass);
+
 searchForm.addEventListener('submit', handleSearch);
+
+btnLoadMore.addEventListener('click', handleLoadMore);
 
 async function handleSearch(event) {
   event.preventDefault();
@@ -64,7 +68,6 @@ async function handleSearch(event) {
     markupPhoto(hits, ulEl);
     if (hits.length > 0 && hits.length !== totalHits) {
       btnLoadMore.classList.remove(hiddenClass);
-      btnLoadMore.addEventListener('click', handleLoadMore);
     } else if (!hits.length) {
       btnLoadMore.classList.add(hiddenClass);
 

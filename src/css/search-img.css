@@ -175,3 +175,7 @@
 span {
   font-weight: 500;
 }
+
+.is-hidden {
+  display: none;
+}
