@@ -82,7 +82,13 @@ async function handleSearch(event) {
       btnLoadMore.classList.add(hiddenClass);
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    iziToast.error({
+      title: 'Error',
+      titleSize: '30',
+      messageSize: '25',
+      message: 'Sorry! Try later! Server not working',
+    });
   } finally {
     loader.classList.add(hiddenClass);
 
@@ -104,7 +110,8 @@ async function getPhotos(value, page = 1) {
       },
     });
     return response.data;
-  } catch {
+  } catch (error) {
+    console.error(error);
     iziToast.error({
       title: 'Error',
       titleSize: '30',
@@ -130,7 +137,7 @@ async function handleLoadMore() {
     const { hits } = await getPhotos(query, page);
     markupPhoto(hits, ulEl);
   } catch (error) {
-    console.log(error);
+    console.error(error);
   } finally {
     window.scrollBy({
       top: getHeightImgCard.height * 2,
@@ -153,6 +160,8 @@ async function handleLoadMore() {
     }
   }
 }
+
+btnLoadMore.addEventListener('click', handleLoadMore);
 
 // ------------------------------------------------------------РОЗМІТКА--------------------------------------------------------------------
 
