@@ -14,7 +14,7 @@ const searchForm = document.querySelector('.js-search-form');
 const ulEl = document.querySelector('.list-photo');
 const btnLoadMore = document.querySelector('[data-action="load-more"]');
 const loader = document.querySelector('.loader');
-const loaderLoadMore = document.querySelector('.loader-load-more');
+
 
 let page = 1;
 let maxPage = 0;
@@ -73,8 +73,10 @@ async function handleSearch(event) {
 }
 
 async function handleLoadMore() {
+  if (page >= maxPage) return;
+  
   page += 1;
-  loaderLoadMore.classList.remove(hiddenClass);
+  loader.classList.remove(hiddenClass);
   btnLoadMore.classList.add(hiddenClass);
 
   const getHeightImgCard = document.querySelector('.gallery-item').getBoundingClientRect();
@@ -90,7 +92,7 @@ async function handleLoadMore() {
       left: 0,
       behavior: 'smooth',
     });
-    loaderLoadMore.classList.add(hiddenClass);
+    loader.classList.add(hiddenClass);
     btnLoadMore.classList.remove(hiddenClass);
     if (page === maxPage) {
       btnLoadMore.classList.add(hiddenClass);
