@@ -1,10 +1,9 @@
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
-
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-
-import axios from 'axios';
+import { getPhotos } from './js/pixabay-api';
+import { showErrorMessage, hiddenClass, hideElement, showElement, resetForm } from './js/render-functions';
 
 const modalLightboxGallery = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
@@ -17,24 +16,15 @@ const btnLoadMore = document.querySelector('[data-action="load-more"]');
 const loader = document.querySelector('.loader');
 const loaderLoadMore = document.querySelector('.loader-load-more');
 
-const hiddenClass = 'is-hidden';
-
 let page = 1;
-
 let maxPage = 0;
-
 let query = '';
 
-const BASE_URL = 'https://pixabay.com/api';
-const API_KEY = '41849458-2d98265cf06659a45ba73a30c';
-
-// Приховання кнопки "load more" при завантаженні сторінки
 document.addEventListener('DOMContentLoaded', () => {
   btnLoadMore.classList.add(hiddenClass);
 });
 
 searchForm.addEventListener('submit', handleSearch);
-
 btnLoadMore.addEventListener('click', handleLoadMore);
 
 async function handleSearch(event) {
@@ -53,35 +43,23 @@ async function handleSearch(event) {
     loader.classList.add(hiddenClass);
     btnLoadMore.classList.add(hiddenClass);
 
-    iziToast.show({
-      title: 'Error',
-      titleSize: '30',
-      messageSize: '25',
-      color: 'yellow',
-      message: 'Please search for something',
-    });
+    showErrorMessage('Please search for something');
     return;
   }
 
   try {
     const { hits, totalHits } = await getPhotos(query);
 
-    maxPage = Math.ceil(totalHits / 15); //змінив значення на 15
+    maxPage = Math.ceil(totalHits / 15);
 
     markupPhoto(hits, ulEl);
     
     if (hits.length > 0 && hits.length !== totalHits && page <= maxPage) {
-    btnLoadMore.classList.remove(hiddenClass);
+      btnLoadMore.classList.remove(hiddenClass);
    } else if (!hits.length) {
       btnLoadMore.classList.add(hiddenClass);
 
-      iziToast.error({
-        title: 'Error',
-        titleSize: '30',
-        messageSize: '25',
-        message:
-          'Sorry, there are no images matching your search query. Please try again!',
-      });
+      showErrorMessage('Sorry, there are no images matching your search query. Please try again!');
     } else {
       btnLoadMore.classList.add(hiddenClass);
     }
@@ -90,45 +68,16 @@ async function handleSearch(event) {
   } finally {
     loader.classList.add(hiddenClass);
 
-    form.reset();
+    resetForm(form);
   }
 }
-
-async function getPhotos(value, page = 1) {
-  try {
-    const response = await axios.get(`${BASE_URL}/`, {
-      params: {
-        key: API_KEY,
-        q: value,
-        image_type: 'photo',
-        orientation: 'horizontal',
-        safesearch: 'true',
-        per_page: 15,
-        page,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    iziToast.error({
-      title: 'Error',
-      titleSize: '30',
-      messageSize: '25',
-      message: 'Sorry! Try later! Server not working',
-    });
-    console.error(error.message);
-  }
-}
-
-// ------------------------------------------------------------КНОПКА LOAD MORE-------------------------------------------------------------
 
 async function handleLoadMore() {
   page += 1;
   loaderLoadMore.classList.remove(hiddenClass);
   btnLoadMore.classList.add(hiddenClass);
 
-  const getHeightImgCard = document
-    .querySelector('.gallery-item')
-    .getBoundingClientRect();
+  const getHeightImgCard = document.querySelector('.gallery-item').getBoundingClientRect();
 
   try {
     const { hits } = await getPhotos(query, page);
@@ -157,9 +106,6 @@ async function handleLoadMore() {
     }
   }
 }
-
-
-// ------------------------------------------------------------РОЗМІТКА--------------------------------------------------------------------
 
 function markupPhoto(hits) {
   const markup = hits
