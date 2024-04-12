@@ -28,7 +28,10 @@ let query = '';
 const BASE_URL = 'https://pixabay.com/api';
 const API_KEY = '41849458-2d98265cf06659a45ba73a30c';
 
-btnLoadMore.classList.add(hiddenClass);
+// Приховання кнопки "load more" при завантаженні сторінки
+document.addEventListener('DOMContentLoaded', () => {
+  btnLoadMore.classList.add(hiddenClass);
+});
 
 searchForm.addEventListener('submit', handleSearch);
 
@@ -63,24 +66,27 @@ async function handleSearch(event) {
   try {
     const { hits, totalHits } = await getPhotos(query);
 
-    maxPage = Math.ceil(totalHits / 40);
+    maxPage = Math.ceil(totalHits / 15); //змінив значення на 15
 
     markupPhoto(hits, ulEl);
     
     if (hits.length > 0 && hits.length !== totalHits && page <= maxPage) {
     btnLoadMore.classList.remove(hiddenClass);
-  } else {
-    btnLoadMore.classList.add(hiddenClass);
-  }
-  
-} catch (error) {
-  console.error(error);
-  iziToast.error({
-    title: 'Error',
-    titleSize: '30',
-    messageSize: '25',
-    message: 'Sorry! Try later! Server not working',
-  });
+   } else if (!hits.length) {
+      btnLoadMore.classList.add(hiddenClass);
+
+      iziToast.error({
+        title: 'Error',
+        titleSize: '30',
+        messageSize: '25',
+        message:
+          'Sorry, there are no images matching your search query. Please try again!',
+      });
+    } else {
+      btnLoadMore.classList.add(hiddenClass);
+    }
+  } catch (error) {
+    console.log(error);
   } finally {
     loader.classList.add(hiddenClass);
 
@@ -97,13 +103,12 @@ async function getPhotos(value, page = 1) {
         image_type: 'photo',
         orientation: 'horizontal',
         safesearch: 'true',
-        per_page: 40,
+        per_page: 15,
         page,
       },
     });
     return response.data;
   } catch (error) {
-    console.error(error);
     iziToast.error({
       title: 'Error',
       titleSize: '30',
