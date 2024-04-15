@@ -54,7 +54,7 @@ async function handleSearch(event) {
 
     markupPhoto(hits, ulEl);
     
-    if (hits.length > 0 && hits.length !== totalHits && page <= maxPage) {
+    if (hits.length > 0 && hits.length !== totalHits && page < maxPage) {
       btnLoadMore.classList.remove(hiddenClass);
    } else if (!hits.length) {
       btnLoadMore.classList.add(hiddenClass);
