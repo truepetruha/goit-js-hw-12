@@ -15,14 +15,10 @@ const ulEl = document.querySelector('.list-photo');
 const btnLoadMore = document.querySelector('[data-action="load-more"]');
 const loader = document.querySelector('.loader');
 
-
+const perPage = 15;
 let page = 1;
 let maxPage = 0;
 let query = '';
-
-document.addEventListener('DOMContentLoaded', () => {
-  btnLoadMore.classList.add(hiddenClass);
-});
 
 searchForm.addEventListener('submit', handleSearch);
 btnLoadMore.addEventListener('click', handleLoadMore);
@@ -34,7 +30,9 @@ async function handleSearch(event) {
 
   loader.classList.remove(hiddenClass);
 
-  page = 1;
+  if (page > 1) {
+    page = 1;
+  }
 
   const form = event.currentTarget;
   query = form.elements.query.value.trim();
@@ -48,12 +46,12 @@ async function handleSearch(event) {
   }
 
   try {
-    const { hits, totalHits } = await getPhotos(query);
+    const { hits, totalHits } = await getPhotos(query, page, perPage);
 
     maxPage = Math.ceil(totalHits / 15);
 
     markupPhoto(hits, ulEl);
-    
+
     if (hits.length > 0 && hits.length !== totalHits && page <= maxPage) {
       btnLoadMore.classList.remove(hiddenClass);
    } else if (!hits.length) {
@@ -73,8 +71,6 @@ async function handleSearch(event) {
 }
 
 async function handleLoadMore() {
-  // if (page >= maxPage) return;
-  
   page += 1;
   loader.classList.remove(hiddenClass);
   btnLoadMore.classList.add(hiddenClass);
@@ -82,7 +78,7 @@ async function handleLoadMore() {
   const getHeightImgCard = document.querySelector('.gallery-item').getBoundingClientRect();
 
   try {
-    const { hits } = await getPhotos(query, page);
+    const { hits } = await getPhotos(query, page, perPage);
     markupPhoto(hits, ulEl);
   } catch (error) {
     console.error(error);
@@ -96,7 +92,6 @@ async function handleLoadMore() {
     btnLoadMore.classList.remove(hiddenClass);
     if (page === maxPage) {
       btnLoadMore.classList.add(hiddenClass);
-      btnLoadMore.removeEventListener('click', handleLoadMore);
       iziToast.show({
         title: 'Hey',
         titleSize: '30',
